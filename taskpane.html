@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SnapSize</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <link rel="stylesheet" href="taskpane.css" />
+</head>
+<body>
+  <header>
+    <img src="assets/icon-32.png" alt="" width="20" height="20" />
+    <h1>SnapSize</h1>
+  </header>
+
+  <!-- Empty state -->
+  <section id="empty">
+    <div id="drop" tabindex="0">
+      <div class="big">Press <kbd>Ctrl</kbd>+<kbd>V</kbd></div>
+      <div>to paste an image, or drop one here</div>
+      <label class="link">or choose a file<input id="file" type="file" accept="image/*" hidden /></label>
+    </div>
+    <p class="hint">Tip: pin this pane (📌 at the top) and it stays open for every email.</p>
+    <p id="status" class="status" role="status"></p>
+  </section>
+
+  <!-- Edit mode -->
+  <section id="editor" hidden>
+    <div class="toolbar" role="toolbar" aria-label="Size">
+      <button id="fit" title="Fit to email width (F)">Fit</button>
+      <button id="zoomOut" title="Smaller (−)" aria-label="Smaller">−</button>
+      <button id="zoomIn" title="Larger (+)" aria-label="Larger">+</button>
+      <button id="actual" title="Actual pixels (0)">100%</button>
+      <button id="rotate" title="Rotate 90° (R)" aria-label="Rotate">⟳</button>
+    </div>
+    <div class="row">
+      <span id="info" class="info"></span>
+      <label class="check"><input id="border" type="checkbox" /> Border</label>
+    </div>
+
+    <div class="stage">
+      <div id="frame" class="frame"><canvas id="preview"></canvas></div>
+    </div>
+    <p class="hint">Shown at the exact size it will appear in the email.</p>
+
+    <div class="actions">
+      <button id="done" class="primary" title="Insert at cursor (Enter)">✓ Done — insert</button>
+      <button id="discard" title="Discard (Esc)">Discard</button>
+    </div>
+  </section>
+
+  <details class="settings">
+    <summary>Settings</summary>
+    <label>Fit width (px) <input id="fitWidth" type="number" min="100" max="2000" step="10" /></label>
+  </details>
+
+  <script src="png.js"></script>
+  <script src="taskpane.js"></script>
+</body>
+</html>
