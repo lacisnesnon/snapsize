@@ -10,51 +10,101 @@
 <body>
   <header>
     <img src="assets/icon-32.png" alt="" width="20" height="20" />
-    <h1>SnapSize</h1>
+    <h1 id="title">SnapSize</h1>
+    <button id="openSettings" class="icon" title="Settings" aria-label="Settings">
+      <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M10 6.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4Zm6.3 3.2c0-.5 0-.9-.1-1.3l1.7-1.3-1.6-2.8-2 .8c-.7-.6-1.4-1-2.3-1.3L11.6 2H8.4l-.4 2.1c-.8.3-1.6.7-2.3 1.3l-2-.8-1.6 2.8 1.7 1.3a7 7 0 0 0 0 2.6l-1.7 1.3 1.6 2.8 2-.8c.7.6 1.5 1 2.3 1.3l.4 2.1h3.2l.4-2.1c.9-.3 1.6-.7 2.3-1.3l2 .8 1.6-2.8-1.7-1.3c.1-.4.1-.8.1-1.3Z"/></svg>
+    </button>
+    <button id="closeSettings" class="icon" title="Back" aria-label="Back to editor" hidden>
+      <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M12 4 6 10l6 6"/></svg>
+    </button>
   </header>
 
-  <!-- Empty state -->
-  <section id="empty">
-    <div id="drop" tabindex="0">
-      <div class="big">Press <kbd>Ctrl</kbd>+<kbd>V</kbd></div>
-      <div>to paste an image, or drop one here</div>
-      <label class="link">or choose a file<input id="file" type="file" accept="image/*" hidden /></label>
-    </div>
-    <p class="hint">Tip: pin this pane (📌 at the top) and it stays open for every email.</p>
-    <p id="status" class="status" role="status"></p>
-  </section>
+  <main id="main">
+    <!-- Empty state -->
+    <section id="empty">
+      <div id="drop" tabindex="0">
+        <div class="big">Press <kbd>Ctrl</kbd>+<kbd>V</kbd></div>
+        <div>to paste an image, or drop one here</div>
+        <label class="link">or choose a file<input id="file" type="file" accept="image/*" hidden /></label>
+      </div>
+      <p class="hint">Tip: pin this pane (📌 at the top) and it stays open for every email.</p>
+      <p id="status" class="status" role="status"></p>
+    </section>
 
-  <!-- Edit mode -->
-  <section id="editor" hidden>
-    <div class="toolbar" role="toolbar" aria-label="Size">
-      <button id="fit" title="Fit to email width (F)">Fit</button>
-      <button id="zoomOut" title="Smaller (−)" aria-label="Smaller">−</button>
-      <button id="zoomIn" title="Larger (+)" aria-label="Larger">+</button>
-      <button id="actual" title="Actual pixels (0)">100%</button>
-      <button id="rotate" title="Rotate 90° (R)" aria-label="Rotate">⟳</button>
-    </div>
-    <div class="row">
-      <span id="info" class="info"></span>
-      <label class="check"><input id="border" type="checkbox" /> Border</label>
-    </div>
+    <!-- Edit mode -->
+    <section id="editor" hidden>
+      <div id="tools" class="tools" role="toolbar" aria-label="Edit tools"></div>
 
-    <div class="stage">
-      <div id="frame" class="frame"><canvas id="preview"></canvas></div>
-    </div>
-    <p class="hint">Shown at the exact size it will appear in the email.</p>
+      <div id="effectsMenu" class="popover" hidden>
+        <label class="check"><input type="checkbox" data-fx="shadow" /> Drop shadow</label>
+        <label class="check"><input type="checkbox" data-fx="grayscale" /> Greyscale</label>
+        <label class="check"><input type="checkbox" data-fx="border" /> Thin border</label>
+      </div>
 
+      <div id="props" class="props">
+        <label title="Colour"><input id="pColor" type="color" aria-label="Colour" /></label>
+        <label id="pWidthWrap" title="Line width">
+          <select id="pWidth" aria-label="Line width">
+            <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>8</option><option>10</option>
+          </select>
+        </label>
+        <label id="pFontWrap" title="Text size"><input id="pFont" type="number" min="8" max="72" aria-label="Text size" /> px</label>
+        <label id="pFillWrap" class="check" title="Filled shape"><input id="pFill" type="checkbox" /> Fill</label>
+        <span class="spacer"></span>
+        <button id="undo" class="icon" title="Undo (Ctrl+Z)" aria-label="Undo">
+          <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M7 5 3 9l4 4M3.5 9H12a5 5 0 0 1 0 10h-2"/></svg>
+        </button>
+      </div>
+
+      <div id="cropBar" class="cropbar" hidden>
+        <span>Drag to choose the area to keep</span>
+        <button id="cropApply" class="primary small">Crop</button>
+        <button id="cropCancel" class="small">Cancel</button>
+      </div>
+
+      <div class="row">
+        <div class="zoom">
+          <button id="fit" title="Fit to email width">Fit</button>
+          <button id="zoomOut" title="Smaller (−)" aria-label="Smaller">−</button>
+          <button id="zoomIn" title="Larger (+)" aria-label="Larger">+</button>
+          <button id="actual" title="Actual pixels (0)">100%</button>
+        </div>
+        <label class="size" title="Width in pixels">
+          <input id="widthPx" type="number" min="10" max="8000" aria-label="Width in pixels" />
+          <span id="info" class="info"></span>
+        </label>
+      </div>
+
+      <div class="stage">
+        <div id="frame" class="frame"><canvas id="preview"></canvas></div>
+      </div>
+      <p class="hint">Shown at the exact size it will appear in the email.</p>
+
+      <div class="actions">
+        <button id="done" class="primary" title="Insert at cursor (Enter)">✓ Done — insert</button>
+        <button id="discard" title="Discard">Discard</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Settings -->
+  <section id="settings" hidden>
+    <div id="settingsBody"></div>
+
+    <h2>Test SnapSize</h2>
+    <p class="hint">Checks Outlook, your hosting, every tool, resizing and compression.</p>
     <div class="actions">
-      <button id="done" class="primary" title="Insert at cursor (Enter)">✓ Done — insert</button>
-      <button id="discard" title="Discard (Esc)">Discard</button>
+      <button id="runTest" class="primary">Run self-test</button>
+      <button id="insertTest" title="Inserts a small sample image at your cursor">Insert test image</button>
     </div>
+    <ul id="testResults" class="results" aria-live="polite"></ul>
+    <p class="hint">SnapSize v<span id="version"></span></p>
   </section>
-
-  <details class="settings">
-    <summary>Settings</summary>
-    <label>Fit width (px) <input id="fitWidth" type="number" min="100" max="2000" step="10" /></label>
-  </details>
 
   <script src="png.js"></script>
+  <script src="editor.js"></script>
+  <script src="settings.js"></script>
+  <script src="selftest.js"></script>
   <script src="taskpane.js"></script>
 </body>
 </html>
